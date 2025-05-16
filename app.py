@@ -4,6 +4,41 @@ import pandas as pd
 from datetime import datetime
 import io
 
+def check_password():
+    """Retorna `True` se o usuário acertar a senha."""
+    
+    def password_entered():
+        """Verifica se a senha está correta."""
+        if (st.session_state["username"] == "admin" and 
+            st.session_state["password"] == "brasil02"):
+            st.session_state["password_correct"] = True
+            st.session_state["user"] = "admin"  # Armazena o usuário
+            del st.session_state["password"]  # Remove a senha da memória
+        else:
+            st.session_state["password_correct"] = False
+    
+    # Mostra o formulário de login se não estiver logado
+    if "password_correct" not in st.session_state:
+        st.text_input("Usuário", key="username", on_change=password_entered)
+        st.text_input("Senha", type="password", key="password", on_change=password_entered)
+        st.error("😕 Usuário/senha incorretos" if "password_correct" in st.session_state and not st.session_state["password_correct"] else "")
+        return False
+    elif not st.session_state["password_correct"]:
+        # Senha incorreta, mostra o formulário novamente
+        st.text_input("Usuário", key="username", on_change=password_entered)
+        st.text_input("Senha", type="password", key="password", on_change=password_entered)
+        st.error("😕 Usuário/senha incorretos")
+        return False
+    else:
+        # Usuário autenticado!
+        return True
+
+if not check_password():
+    st.stop()  # Interrompe a execução se não estiver logado
+
+
+
+
 # Configuração da página
 st.set_page_config(page_title="Envio de Álbuns", layout="wide")
 
